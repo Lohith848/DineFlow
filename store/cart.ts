@@ -9,7 +9,9 @@ type CartItem = {
 
 type CartStore = {
     items: CartItem[]
-    addItem: (item: any) => void
+    addItem: (item: CartItem) => void
+    removeItem: (id: string) => void
+    clearCart: () => void
 }
 
 export const useCart = create<CartStore>((set) => ({
@@ -17,9 +19,9 @@ export const useCart = create<CartStore>((set) => ({
 
     addItem: (item) =>
         set((state) => {
-            const exists = state.items.find(i => i.id === item.id)
+            const existing = state.items.find(i => i.id === item.id)
 
-            if (exists) {
+            if (existing) {
                 return {
                     items: state.items.map(i =>
                         i.id === item.id
@@ -33,4 +35,11 @@ export const useCart = create<CartStore>((set) => ({
                 items: [...state.items, { ...item, qty: 1 }],
             }
         }),
+
+    removeItem: (id) =>
+        set((state) => ({
+            items: state.items.filter(i => i.id !== id),
+        })),
+
+    clearCart: () => set({ items: [] }),
 }))
