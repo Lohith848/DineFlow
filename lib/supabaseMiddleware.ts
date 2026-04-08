@@ -34,7 +34,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Only login and auth callback are public — everything else requires auth
-  const publicPaths = ["/login", "/auth/callback", "/auth/signout"]
+  const publicPaths = ["/login", "/admin/login", "/auth/callback", "/auth/signout"]
 
   const isPublicPath = publicPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
@@ -45,14 +45,16 @@ export async function updateSession(request: NextRequest) {
 
   if (!isPublicPath && !user) {
     // No user, redirect to login
-    const url = new URL("/login", request.url)
+    const loginUrl = isAdminPath ? "/admin/login" : "/login"
+    const url = new URL(loginUrl, request.url)
     url.searchParams.set("redirect", request.nextUrl.pathname)
     return NextResponse.redirect(url)
   }
 
-  // If user is already logged in and visits /login, redirect to home
-  if (user && request.nextUrl.pathname === "/login") {
-    return NextResponse.redirect(new URL("/", request.url))
+  // If user is already logged in and visits /login or /admin/login, redirect to home
+  if (user && (request.nextUrl.pathname === "/login" || request.nextUrl.pathname === "/admin/login")) {
+    const redirectUrl = isAdminPath ? "/admin" : "/"
+    return NextResponse.redirect(new URL(redirectUrl, request.url))
   }
 
   if (isAdminPath && user) {
