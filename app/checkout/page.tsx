@@ -11,7 +11,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { MessageCircle } from "lucide-react"
+import {
+  MessageCircle,
+  MapPin,
+  Phone,
+  User,
+  GraduationCap,
+  ShoppingBag,
+  ArrowLeft,
+  CreditCard,
+} from "lucide-react"
 import type { Profile } from "@/lib/types"
 
 export default function CheckoutPage() {
@@ -67,7 +76,6 @@ export default function CheckoutPage() {
 
     setLoading(true)
 
-    // Create order in database
     const formData = new FormData()
     formData.set("items", JSON.stringify(items))
     formData.set("total", total.toString())
@@ -81,7 +89,6 @@ export default function CheckoutPage() {
       return
     }
 
-    // Build WhatsApp message
     const message = `🍽️ *New Order - The Hunters Kitchen*
 
 👤 Name: ${name}
@@ -95,109 +102,176 @@ ${items.map((i) => `${i.qty}x ${i.name} - ₹${i.price * i.qty}`).join("\n")}
 💰 Total: ₹${total}
 💵 Payment: Cash on Delivery`
 
-    // Open WhatsApp
     const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "916383346991"
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
     window.open(url, "_blank")
 
-    // Clear cart and redirect
     clearCart()
     router.push("/orders")
   }
 
   return (
-    <div className="container py-12">
-      <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        {/* Delivery Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Delivery Details</CardTitle>
-            <CardDescription>
-              Where should we deliver your order?
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="John Doe"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 9876543210"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="college">College Name</Label>
-              <Input
-                id="college"
-                value={college}
-                onChange={(e) => setCollege(e.target.value)}
-                placeholder="XYZ Engineering College"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="address">Hostel Address</Label>
-              <Textarea
-                id="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Hostel 5, Room 123, Floor 1"
-                rows={3}
-              />
-            </div>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen">
+      {/* Hero */}
+      <div className="bg-gradient-to-r from-slate-900 to-slate-800 py-16">
+        <div className="container">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="text-slate-400 hover:text-white mb-4 -ml-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-4xl font-bold text-white">Checkout</h1>
+          <p className="text-slate-400 mt-2">Complete your order details</p>
+        </div>
+      </div>
 
-        {/* Order Summary */}
-        <div className="space-y-4">
+      <div className="container py-12">
+        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {/* Delivery Details */}
           <Card>
             <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-orange-500" />
+                Delivery Details
+              </CardTitle>
+              <CardDescription>
+                Where should we deliver your order?
+              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-2">
-              {items.map((item) => (
-                <div key={item.id} className="flex justify-between text-sm">
-                  <span>
-                    {item.qty}x {item.name}
-                  </span>
-                  <span>₹{item.price * item.qty}</span>
-                </div>
-              ))}
-              <div className="border-t pt-2 flex justify-between font-semibold">
-                <span>Total</span>
-                <span>₹{total}</span>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-muted-foreground" />
+                  Full Name
+                </Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Doe"
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  Phone Number
+                </Label>
+                <Input
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+91 9876543210"
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="college" className="flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-muted-foreground" />
+                  College Name
+                </Label>
+                <Input
+                  id="college"
+                  value={college}
+                  onChange={(e) => setCollege(e.target.value)}
+                  placeholder="XYZ Engineering College"
+                  className="h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address" className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                  Hostel Address
+                </Label>
+                <Textarea
+                  id="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Hostel 5, Room 123, Floor 1"
+                  rows={3}
+                />
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Badge variant="secondary">COD</Badge>
-                <span>Cash on Delivery only</span>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button
-                className="w-full gap-2 bg-green-600 hover:bg-green-700"
-                size="lg"
-                onClick={handleOrder}
-                disabled={loading}
-              >
-                <MessageCircle className="w-5 h-5" />
-                {loading ? "Processing..." : "Order via WhatsApp"}
-              </Button>
-            </CardFooter>
-          </Card>
+          {/* Order Summary */}
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShoppingBag className="w-5 h-5 text-orange-500" />
+                  Order Summary
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {items.map((item) => (
+                  <div key={item.id} className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <ShoppingBag className="w-6 h-6 text-gray-400" />
+                      </div>
+                      <div>
+                        <p className="font-medium">{item.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          ₹{item.price} × {item.qty}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="font-semibold">₹{item.price * item.qty}</span>
+                  </div>
+                ))}
+                <div className="border-t pt-4 flex justify-between">
+                  <span className="font-semibold">Subtotal</span>
+                  <span className="font-semibold">₹{total}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Delivery Fee</span>
+                  <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50">
+                    FREE
+                  </Badge>
+                </div>
+                <div className="border-t pt-4 flex justify-between">
+                  <span className="font-bold text-lg">Total</span>
+                  <span className="font-bold text-lg text-orange-600">₹{total}</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                    <CreditCard className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Payment Method</p>
+                    <p className="text-sm text-muted-foreground">Cash on Delivery</p>
+                  </div>
+                </div>
+                <Button
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold h-12"
+                  size="lg"
+                  onClick={handleOrder}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="w-5 h-5 mr-2" />
+                      Order via WhatsApp
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

@@ -1,3 +1,8 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabaseClient"
 import Link from "next/link"
 import {
   ShoppingBag,
@@ -7,90 +12,153 @@ import {
   Sparkles,
   Clock,
   Star,
+  ArrowRight,
+  UtensilsCrossed,
+  Heart,
+  MapPin,
 } from "lucide-react"
 
 export default function HomePage() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    checkAuth()
+  }, [])
+
+  const checkAuth = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    
+    if (!session) {
+      router.replace("/login")
+    } else {
+      setIsLoggedIn(true)
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+          <p className="text-muted-foreground font-medium">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
+      {/* Hero Section - Distinctive Warm Design */}
       <section className="relative overflow-hidden">
-        {/* Ambient blobs */}
+        {/* Background patterns */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-orange-100/60 to-amber-50/40 blur-3xl" />
-          <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-rose-100/40 to-orange-50/30 blur-3xl" />
+          {/* Large organic blob shapes */}
+          <div className="absolute top-[-20%] right-[-10%] w-[700px] h-[700px] blob-1 bg-gradient-to-br from-primary/8 to-transparent blur-3xl opacity-60" />
+          <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] blob-2 bg-gradient-to-tr from-secondary/10 to-transparent blur-3xl opacity-50" />
+          
+          {/* Subtle grid pattern overlay */}
+          <div className="absolute inset-0 bg-grid opacity-30" />
+          
+          {/* Decorative lines */}
+          <div className="absolute top-40 left-10 w-px h-40 bg-gradient-to-b from-primary/0 via-primary/30 to-primary/0" />
+          <div className="absolute bottom-40 right-10 w-px h-40 bg-gradient-to-t from-secondary/0 via-secondary/30 to-secondary/0" />
         </div>
 
         <div className="container py-20 md:py-28 lg:py-36">
           <div className="flex flex-col items-center text-center max-w-3xl mx-auto animate-fade-up">
-            {/* Tag */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 border border-primary/15 text-primary text-xs font-semibold tracking-wide uppercase mb-6">
-              <Sparkles className="w-3.5 h-3.5" />
-              Student Exclusive
+            {/* Badge with warm styling */}
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-card border-2 border-border/60 text-sm font-medium shadow-sm mb-8 hover:shadow-md transition-shadow">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span className="text-muted-foreground">Student</span>
+              <span className="text-primary">Exclusive</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
-              Fresh Food,{" "}
-              <span className="text-gradient">Free Delivery</span>
-              <br />
-              to Your Hostel
+            {/* Distinctive typography with warm gradient */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05]">
+              <span className="block">Fresh Food,</span>
+              <span className="text-gradient block mt-2">Free Delivery</span>
+              <span className="block mt-2">to Your Hostel</span>
             </h1>
 
-            <p className="mt-6 text-base sm:text-lg text-muted-foreground max-w-xl leading-relaxed">
-              The Hunters Kitchen brings delicious, home-style meals straight to
-              your college hostel door. No delivery fees, ever.
+            <p className="mt-8 text-lg sm:text-xl text-muted-foreground max-w-xl leading-relaxed">
+              <span className="font-medium text-foreground">The Hunters Kitchen</span> brings 
+              home-style meals straight to your college hostel. No hidden fees, ever.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-3 mt-10">
+            {/* CTA buttons with distinctive styling */}
+            <div className="flex flex-col sm:flex-row items-center gap-4 mt-12">
               <Link
                 href="/menu"
-                className="flex items-center gap-2.5 h-12 px-8 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-semibold shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-0.5 transition-all duration-300"
+                className="group flex items-center gap-3 h-14 px-8 rounded-2xl bg-primary text-primary-foreground font-semibold shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 transition-all duration-300"
               >
-                <ShoppingBag className="w-5 h-5" />
+                <UtensilsCrossed className="w-5 h-5" />
                 Order Now
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/menu"
-                className="flex items-center gap-2 h-12 px-6 rounded-xl border border-border/60 bg-background text-sm font-medium text-muted-foreground hover:text-foreground hover:border-border hover:bg-muted/40 transition-all duration-200"
+                className="group flex items-center gap-2 h-14 px-6 rounded-2xl border-2 border-border/60 bg-card text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-card/80 transition-all duration-200"
               >
-                View Menu
-                <ChevronRight className="w-4 h-4" />
+                <ShoppingBag className="w-4 h-4" />
+                Browse Menu
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Trust Indicators */}
-      <section className="border-y border-border/40 bg-muted/20">
-        <div className="container py-6">
-          <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-3 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Truck className="w-4 h-4 text-primary/70" />
-              <span>Free Delivery</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-primary/70" />
-              <span>30 Min Delivery</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Star className="w-4 h-4 text-primary/70" />
-              <span>Loved by 500+ Students</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Wallet className="w-4 h-4 text-primary/70" />
-              <span>Student-Friendly Prices</span>
+            {/* Trust indicators */}
+            <div className="flex items-center gap-8 mt-10 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-primary" />
+                </div>
+                <span>500+ Students</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center">
+                  <Clock className="w-4 h-4 text-secondary-foreground" />
+                </div>
+                <span>30 min avg</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="container py-20 md:py-24">
-        <div className="text-center mb-14 animate-fade-up">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+      {/* Features Section - Clean Card Design */}
+      <section className="border-y border-border/40 bg-muted/10">
+        <div className="container py-10">
+          <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-4">
+            {[
+              { icon: Truck, label: "Free Delivery", color: "text-primary" },
+              { icon: Clock, label: "30 Min Delivery", color: "text-secondary-foreground" },
+              { icon: Star, label: "4.9 Rating", color: "text-[oklch(0.55_0.12_55)]" },
+              { icon: Wallet, label: "Student Prices", color: "text-[oklch(0.45_0.15_30)]" },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-3 group">
+                <div className="w-10 h-10 rounded-xl bg-card border border-border/40 flex items-center justify-center group-hover:border-primary/30 transition-colors">
+                  <item.icon className={`w-5 h-5 ${item.color}`} />
+                </div>
+                <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                  {item.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Students Love Us - Cards with hover effects */}
+      <section className="container py-20 md:py-28">
+        <div className="text-center mb-16 animate-fade-up">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
             Why Students Love Us
           </h2>
-          <p className="text-muted-foreground mt-3 max-w-md mx-auto">
+          <p className="text-muted-foreground mt-4 max-w-md mx-auto text-lg">
             Everything you need for a great meal, without the hassle
           </p>
         </div>
@@ -101,35 +169,42 @@ export default function HomePage() {
               icon: Truck,
               title: "Free Delivery",
               desc: "Zero delivery charges for all orders. We bring the food right to your hostel room.",
-              gradient: "from-blue-500 to-cyan-500",
-              shadow: "shadow-blue-500/20",
+              color: "from-primary to-[oklch(0.55_0.12_30)]",
+              shadow: "shadow-primary/15",
             },
             {
               icon: Wallet,
               title: "Student Prices",
               desc: "Specially curated pricing that fits a student budget. Quality food at honest rates.",
-              gradient: "from-green-500 to-emerald-500",
-              shadow: "shadow-green-500/20",
+              color: "from-secondary to-[oklch(0.60_0.10_145)]",
+              shadow: "shadow-secondary/20",
             },
             {
               icon: ShoppingBag,
               title: "Easy Ordering",
               desc: "Browse, pick, and order in minutes. Track your order and enjoy fresh food.",
-              gradient: "from-orange-500 to-amber-500",
-              shadow: "shadow-orange-500/20",
+              color: "from-[oklch(0.88_0.08_55)] to-[oklch(0.45_0.15_30)]",
+              shadow: "shadow-[oklch(0.45_0.15_30)]/15",
             },
           ].map((feature) => (
             <div
               key={feature.title}
-              className="group p-7 rounded-2xl bg-card border border-border/50 hover:border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="group relative p-8 rounded-2xl bg-card border-2 border-border/40 hover:border-primary/30 hover-lift"
             >
-              <div
-                className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} ${feature.shadow} shadow-md mb-5`}
-              >
-                <feature.icon className="w-6 h-6 text-white" />
+              {/* Decorative corner accent */}
+              <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden">
+                <div className="absolute top-[-20px] right-[-20px] w-40 h-40 bg-gradient-to-br from-primary/5 to-transparent rounded-full" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              
+              <div
+                className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} ${feature.shadow} shadow-lg mb-6`}
+              >
+                <feature.icon className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3 font-[family-name:var(--font-display)]">
+                {feature.title}
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
                 {feature.desc}
               </p>
             </div>
@@ -137,14 +212,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="bg-muted/30 border-y border-border/40">
+      {/* How It Works - Step-by-step design */}
+      <section className="bg-muted/20 border-y border-border/40">
         <div className="container py-20 md:py-24">
-          <div className="text-center mb-14 animate-fade-up">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+          <div className="text-center mb-16 animate-fade-up">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
               How It Works
             </h2>
-            <p className="text-muted-foreground mt-3 max-w-md mx-auto">
+            <p className="text-muted-foreground mt-4 max-w-md mx-auto text-lg">
               Three simple steps to a delicious meal
             </p>
           </div>
@@ -166,15 +241,22 @@ export default function HomePage() {
                 title: "Get Delivered",
                 desc: "Sit back and relax. We'll deliver hot food to your hostel door.",
               },
-            ].map((item) => (
-              <div key={item.step} className="text-center space-y-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-card border border-border/50 shadow-sm">
-                  <span className="text-xl font-bold text-gradient">
+            ].map((item, index) => (
+              <div key={item.step} className="relative text-center group">
+                {/* Connector line */}
+                {index < 2 && (
+                  <div className="hidden md:block absolute top-12 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px bg-gradient-to-r from-border via-primary/30 to-border" />
+                )}
+                
+                <div className="relative inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-card border-2 border-border/60 shadow-lg mb-6 group-hover:border-primary/40 group-hover:shadow-xl transition-all duration-300">
+                  <span className="text-2xl font-bold text-gradient">
                     {item.step}
                   </span>
                 </div>
-                <h3 className="text-lg font-semibold">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed max-w-[280px] mx-auto">
+                <h3 className="text-xl font-semibold mb-3 font-[family-name:var(--font-display)]">
+                  {item.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed max-w-[280px] mx-auto">
                   {item.desc}
                 </p>
               </div>
@@ -183,27 +265,30 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* CTA Section - Warm gradient with distinctive design */}
       <section className="container py-20 md:py-24">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600 p-12 md:p-16 text-center">
-          {/* Decorative */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary via-[oklch(0.48_0.14_35)] to-[oklch(0.55_0.12_30)] p-12 md:p-16 text-center">
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
+          
+          {/* Subtle pattern */}
+          <div className="absolute inset-0 bg-dots opacity-20" />
 
           <div className="relative z-10 animate-fade-up">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 font-[family-name:var(--font-display)]">
               Ready to Order?
             </h2>
-            <p className="text-white/80 mb-8 max-w-lg mx-auto text-base md:text-lg">
-              Join hundreds of students who enjoy fresh meals delivered free
-              every day.
+            <p className="text-white/80 mb-10 max-w-lg mx-auto text-lg">
+              Join hundreds of students who enjoy fresh meals delivered free every day.
             </p>
             <Link
               href="/menu"
-              className="inline-flex items-center gap-2.5 h-12 px-8 rounded-xl bg-white text-orange-600 font-semibold shadow-lg shadow-black/10 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+              className="group inline-flex items-center gap-3 h-14 px-10 rounded-2xl bg-white text-primary font-semibold shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
             >
-              <ShoppingBag className="w-5 h-5" />
+              <UtensilsCrossed className="w-5 h-5" />
               View Full Menu
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </div>
