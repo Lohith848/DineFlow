@@ -4,21 +4,16 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabaseServer"
 
-export async function signUp(formData: FormData) {
+export async function signInWithOAuth(provider: "google" | "azure") {
   const supabase = await createClient()
 
-  const email = formData.get("email") as string
-  const password = formData.get("password") as string
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
 
-  if (!email || !password) {
-    return { error: "Email and password are required" }
-  }
-
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback`,
+      redirectTo: `${siteUrl}/auth/callback`,
     },
   })
 
@@ -26,62 +21,33 @@ export async function signUp(formData: FormData) {
     return { error: error.message }
   }
 
-  return { success: true, user: data.user }
-}
-
-export async function signIn(formData: FormData) {
-  const supabase = await createClient()
-
-  const email = formData.get("email") as string
-  const password = formData.get("password") as string
-
-  if (!email || !password) {
-    return { error: "Email and password are required" }
+  if (data.url) {
+    redirect(data.url)
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
-
-  if (error) {
-    return { error: error.message }
-  }
-
-  revalidatePath("/")
-  redirect("/")
-}
-
-export async function signInWithOtp(formData: FormData) {
-  const supabase = await createClient()
-
-  const phone = formData.get("phone") as string
-
-  if (!phone) {
-    return { error: "Phone number is required" }
-  }
-
-  // For phone auth, you would use supabase.auth.signInWithOtp
-  // This is a placeholder - implement based on your Supabase phone auth setup
-  return { error: "Phone authentication requires additional Supabase configuration" }
+  return { error: "Could not initiate OAuth flow" }
 }
 
 export async function signOut() {
   const supabase = await createClient()
   await supabase.auth.signOut()
   revalidatePath("/")
-  redirect("/")
+  redirect("/login")
 }
 
 export async function getUser() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   return user
 }
 
 export async function getProfile() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (!user) {
     return null
@@ -98,7 +64,9 @@ export async function getProfile() {
 
 export async function createProfile(formData: FormData) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (!user) {
     return { error: "Not authenticated" }
@@ -131,7 +99,9 @@ export async function createProfile(formData: FormData) {
 
 export async function updateProfile(formData: FormData) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (!user) {
     return { error: "Not authenticated" }

@@ -1,141 +1,137 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { signIn, signUp } from "@/lib/actions/auth"
-import { supabase } from "@/lib/supabaseClient"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { GraduationCap } from "lucide-react"
+import { useState } from "react"
+import { signInWithOAuth } from "@/lib/actions/auth"
 
 export default function LoginPage() {
-  const router = useRouter()
+  const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [isSignUp, setIsSignUp] = useState(false)
-  const [checking, setChecking] = useState(true)
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        router.push("/")
-      } else {
-        setChecking(false)
-      }
-    }
-    checkSession()
-  }, [router])
-
-  if (checking) {
-    return null // or a loading spinner
-  }
-
-
-  const handleSubmit = async (formData: FormData) => {
+  const handleOAuth = async (provider: "google" | "azure") => {
+    setLoading(provider)
     setError(null)
-    setLoading(true)
-
-    const action = isSignUp ? signUp : signIn
-    const result = await action(formData)
-
-    if (result?.error) {
-      setError(result.error)
-      setLoading(false)
-    } else if (isSignUp) {
-      // For signUp, redirect to profile setup on success
-      router.push("/profile/setup")
+    try {
+      const result = await signInWithOAuth(provider)
+      if (result?.error) {
+        setError(result.error)
+        setLoading(null)
+      }
+    } catch {
+      // redirect happens on success — this catch is for the NEXT_REDIRECT
     }
-    // For signIn, the server action redirects automatically on success
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-50 py-12 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <div className="flex items-center justify-center mb-2">
-            <Badge variant="secondary" className="gap-2">
-              <GraduationCap className="w-4 h-4" />
-              Students Only
-            </Badge>
-          </div>
-          <CardTitle className="text-2xl text-center">
-            {isSignUp ? "Create Account" : "Welcome Back"}
-          </CardTitle>
-          <CardDescription className="text-center">
-            {isSignUp
-              ? "Enter your email to create your account"
-              : "Sign in to your account"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="your@student.com"
-                required
-                disabled={loading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                required
-                disabled={loading}
-              />
-            </div>
-            {error && (
-              <div className="text-sm text-destructive bg-destructive/10 p-3 rounded">
-                {error}
-              </div>
-            )}
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      {/* Ambient background */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-orange-50 via-amber-50/50 to-rose-50" />
+        <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-gradient-to-br from-orange-200/40 to-amber-100/30 blur-3xl" />
+        <div className="absolute bottom-[-15%] left-[-8%] w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-rose-200/30 to-orange-100/20 blur-3xl" />
+      </div>
+
+      <div className="w-full max-w-[420px] mx-4 animate-fade-up">
+        {/* Logo & Brand */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 shadow-lg shadow-orange-500/25 mb-5">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              {loading ? "Please wait..." : isSignUp ? "Create Account" : "Sign In"}
-            </Button>
-          </form>
-          <div className="mt-6 text-center text-sm">
-            {isSignUp ? (
-              <p>
-                Already have an account?{" "}
-                <button
-                  onClick={() => setIsSignUp(false)}
-                  className="text-primary hover:underline"
-                >
-                  Sign In
-                </button>
-              </p>
-            ) : (
-              <p>
-                Don&apos;t have an account?{" "}
-                <button
-                  onClick={() => setIsSignUp(true)}
-                  className="text-primary hover:underline"
-                >
-                  Sign Up
-                </button>
-              </p>
-            )}
+              <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z" />
+              <line x1="6" y1="17" x2="18" y2="17" />
+            </svg>
           </div>
-          <div className="mt-4 text-center text-xs text-muted-foreground">
-            <p>Use your college email for verification.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            The Hunters Kitchen
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1.5">
+            Sign in to order fresh food delivered to your hostel
+          </p>
+        </div>
+
+        {/* Card */}
+        <div className="glass rounded-2xl p-8 shadow-xl shadow-black/[0.03]">
+          <div className="space-y-3">
+            {/* Google */}
+            <button
+              onClick={() => handleOAuth("google")}
+              disabled={loading !== null}
+              className="group w-full flex items-center justify-center gap-3 h-12 px-6 rounded-xl bg-white border border-gray-200 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:shadow-md hover:border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading === "google" ? (
+                <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                  <path
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                    fill="#FBBC05"
+                  />
+                  <path
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    fill="#EA4335"
+                  />
+                </svg>
+              )}
+              <span>Continue with Google</span>
+            </button>
+
+            {/* Microsoft */}
+            <button
+              onClick={() => handleOAuth("azure")}
+              disabled={loading !== null}
+              className="group w-full flex items-center justify-center gap-3 h-12 px-6 rounded-xl bg-white border border-gray-200 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:shadow-md hover:border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading === "azure" ? (
+                <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin" />
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 23 23">
+                  <rect x="1" y="1" width="10" height="10" fill="#F25022" />
+                  <rect x="12" y="1" width="10" height="10" fill="#7FBA00" />
+                  <rect x="1" y="12" width="10" height="10" fill="#00A4EF" />
+                  <rect x="12" y="12" width="10" height="10" fill="#FFB900" />
+                </svg>
+              )}
+              <span>Continue with Microsoft</span>
+            </button>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Error */}
+          {error && (
+            <div className="mt-4 p-3 rounded-lg bg-red-50 border border-red-100 text-sm text-red-600 animate-fade-in">
+              {error}
+            </div>
+          )}
+
+          {/* Divider */}
+          <div className="mt-6 pt-5 border-t border-gray-100">
+            <p className="text-xs text-center text-muted-foreground leading-relaxed">
+              By continuing, you agree to our Terms of Service.
+              <br />
+              Only college students with valid IDs are eligible.
+            </p>
+          </div>
+        </div>
+
+        {/* Footer tag */}
+        <p className="text-center text-xs text-muted-foreground/60 mt-6">
+          © {new Date().getFullYear()} The Hunters Kitchen
+        </p>
+      </div>
     </div>
   )
 }
