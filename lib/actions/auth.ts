@@ -126,6 +126,8 @@ export async function createProfile(formData: FormData) {
     phone,
     address,
     college,
+  }, {
+    onConflict: 'id'
   })
 
   if (error) {
@@ -133,7 +135,7 @@ export async function createProfile(formData: FormData) {
   }
 
   revalidatePath("/")
-  redirect("/")
+  return { success: true }
 }
 
 export async function updateProfile(formData: FormData) {
@@ -161,12 +163,14 @@ export async function updateProfile(formData: FormData) {
     phone,
     address,
     college,
+  }, {
+    onConflict: 'id'
   })
 
   if (error) {
     return { error: error.message }
   }
 
-  revalidatePath("/")
-  redirect("/")
+  revalidatePath("/profile")
+  return { success: true }
 }

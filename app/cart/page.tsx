@@ -53,7 +53,7 @@ export default function CartPage() {
       .from("profiles")
       .select("*")
       .eq("id", user.id)
-      .single()
+      .maybeSingle()
 
     setProfile(data)
     setProfileLoading(false)
@@ -102,11 +102,11 @@ Total: ₹${total}`
     const whatsappNumber =
       process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "916383346991"
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
-    window.open(url, "_blank")
-
+    
     clearCart()
+    window.open(url, "_blank")
     setLoading(false)
-    router.push("/orders")
+    router.push("/menu")
   }
 
   if (items.length === 0) {

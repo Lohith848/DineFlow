@@ -79,11 +79,7 @@ export default function MenuPage() {
   const handleDecrease = (id: string) => {
     const item = items.find((i) => i.id === id)
     if (item) {
-      if (item.qty <= 1) {
-        useCart.getState().removeItem(id)
-      } else {
-        updateQuantity(id, item.qty - 1)
-      }
+      updateQuantity(id, item.qty - 1)
     }
   }
 

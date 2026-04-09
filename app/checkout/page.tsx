@@ -57,11 +57,11 @@ export default function CheckoutPage() {
       .from("profiles")
       .select("*")
       .eq("id", user.id)
-      .single()
+      .maybeSingle()
 
     if (data) {
       setProfile(data)
-      setName(data.name)
+      setName(data.full_name)
       setPhone(data.phone)
       setAddress(data.address)
       setCollege(data.college)
