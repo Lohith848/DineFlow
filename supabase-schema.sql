@@ -9,7 +9,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ============================================
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,
-  name TEXT NOT NULL,
+  full_name TEXT NOT NULL,
   phone TEXT NOT NULL,
   address TEXT NOT NULL,
   college TEXT NOT NULL,
@@ -87,9 +87,12 @@ ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
 -- RLS POLICIES
 -- ============================================
 
--- Profiles: Users can view and update their own profile
+-- Profiles: Users can view, insert, and update their own profile
 CREATE POLICY "Users can view own profile" ON profiles
   FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert own profile" ON profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
 
 CREATE POLICY "Users can update own profile" ON profiles
   FOR UPDATE USING (auth.uid() = id);
@@ -181,10 +184,10 @@ INSERT INTO menu_items (name, description, price, category, is_available) VALUES
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, name, phone, address, college)
+  INSERT INTO public.profiles (id, full_name, phone, address, college)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'name', ''),
+    COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
     COALESCE(NEW.raw_user_meta_data->>'phone', ''),
     COALESCE(NEW.raw_user_meta_data->>'address', ''),
     COALESCE(NEW.raw_user_meta_data->>'college', '')

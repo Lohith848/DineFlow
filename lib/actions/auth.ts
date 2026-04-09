@@ -111,18 +111,18 @@ export async function createProfile(formData: FormData) {
     return { error: "Not authenticated" }
   }
 
-  const name = formData.get("name") as string
+  const full_name = formData.get("full_name") as string
   const phone = formData.get("phone") as string
   const address = formData.get("address") as string
   const college = formData.get("college") as string
 
-  if (!name || !phone || !address || !college) {
+  if (!full_name || !phone || !address || !college) {
     return { error: "All fields are required" }
   }
 
   const { error } = await supabase.from("profiles").upsert({
     id: user.id,
-    name,
+    full_name,
     phone,
     address,
     college,
@@ -146,19 +146,22 @@ export async function updateProfile(formData: FormData) {
     return { error: "Not authenticated" }
   }
 
-  const name = formData.get("name") as string
+  const full_name = formData.get("full_name") as string
   const phone = formData.get("phone") as string
   const address = formData.get("address") as string
   const college = formData.get("college") as string
 
-  if (!name || !phone || !address || !college) {
+  if (!full_name || !phone || !address || !college) {
     return { error: "All fields are required" }
   }
 
-  const { error } = await supabase
-    .from("profiles")
-    .update({ name, phone, address, college })
-    .eq("id", user.id)
+  const { error } = await supabase.from("profiles").upsert({
+    id: user.id,
+    full_name,
+    phone,
+    address,
+    college,
+  })
 
   if (error) {
     return { error: error.message }

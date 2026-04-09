@@ -2,11 +2,11 @@ import type { CartItem } from "@/store/cart"
 
 export interface Profile {
   id: string
-  name: string
+  full_name: string
   phone: string
   address: string
   college: string
-  created_at: string
+  created_at?: string
 }
 
 export interface MenuItem {

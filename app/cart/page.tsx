@@ -20,7 +20,7 @@ import {
 
 type ProfileData = {
   id: string
-  name: string
+  full_name: string
   phone: string
   address: string
   college: string
@@ -75,7 +75,7 @@ export default function CartPage() {
       }
     }
 
-    if (!profile?.name || !profile?.phone || !profile?.address || !profile?.college) {
+    if (!profile?.full_name || !profile?.phone || !profile?.address || !profile?.college) {
       alert("Please complete your profile before placing an order")
       router.push("/profile")
       return
@@ -89,7 +89,7 @@ export default function CartPage() {
 
     const message = `New Order:
 
-Name: ${profile.name}
+Name: ${profile.full_name}
 Phone: ${profile.phone}
 College: ${profile.college}
 Address: ${profile.address}

@@ -74,12 +74,12 @@ export default function ProfilePage() {
         <CardContent>
           <form action={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="full_name">Full Name</Label>
               <Input
-                id="name"
-                name="name"
+                id="full_name"
+                name="full_name"
                 type="text"
-                defaultValue={profile?.name}
+                defaultValue={profile?.full_name}
                 required
                 disabled={saving}
               />
