@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { signInWithOAuth, signInWithOTP } from "@/lib/actions/auth"
+import { supabase } from "@/lib/supabaseClient"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -18,8 +19,9 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [otpSent, setOtpSent] = useState(false)
   const [email, setEmail] = useState("")
+  const [otp, setOtp] = useState("")
 
-  const handleOAuth = async (provider: "google" | "azure") => {
+  const handleOAuth = async (provider: "google") => {
     setLoading(provider)
     setError(null)
     try {
@@ -49,6 +51,28 @@ export default function LoginPage() {
     } catch {
       // redirect happens on success
     }
+  }
+
+  const handleVerifyOTP = async () => {
+    if (otp.length !== 6) {
+      setError("Please enter the 6-digit OTP.")
+      return
+    }
+    setLoading("verify")
+    setError(null)
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: otp,
+      type: "email",
+    })
+    if (error) {
+      setError(error.message)
+      setLoading(null)
+      return
+    }
+    setTimeout(() => {
+      window.location.href = "/"
+    }, 500)
   }
 
   return (
@@ -111,23 +135,6 @@ export default function LoginPage() {
                   <span>Continue with Google</span>
                 </button>
 
-                <button
-                  onClick={() => handleOAuth("azure")}
-                  disabled={loading !== null}
-                  className="group w-full flex items-center justify-center gap-3 h-12 px-6 rounded-xl bg-white border border-slate-200 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:shadow-md hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading === "azure" ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <svg width="20" height="20" viewBox="0 0 23 23">
-                      <rect x="1" y="1" width="10" height="10" fill="#F25022" />
-                      <rect x="12" y="1" width="10" height="10" fill="#7FBA00" />
-                      <rect x="1" y="12" width="10" height="10" fill="#00A4EF" />
-                      <rect x="12" y="12" width="10" height="10" fill="#FFB900" />
-                    </svg>
-                  )}
-                  <span>Continue with Microsoft</span>
-                </button>
               </div>
 
               {/* Divider */}
@@ -205,15 +212,28 @@ export default function LoginPage() {
                   type="text"
                   placeholder="Enter 6-digit code"
                   maxLength={6}
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
                   className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-orange-500 focus:ring-orange-500 text-center text-2xl tracking-widest"
                 />
               </div>
 
               <Button
+                onClick={handleVerifyOTP}
+                disabled={loading === "verify" || loading === "otp"}
                 className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-semibold"
               >
-                Verify & Sign In
-                <ArrowRight className="w-4 h-4 ml-2" />
+                {loading === "verify" ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  <>
+                    Verify & Sign In
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
               </Button>
 
               <button

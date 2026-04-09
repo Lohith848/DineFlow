@@ -34,7 +34,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Only login and auth callback are public — everything else requires auth
-  const publicPaths = ["/login", "/admin/login", "/auth/callback", "/auth/signout"]
+  const publicPaths = ["/login", "/admin/login", "/auth/callback", "/auth/signout", "/menu"]
 
   const isPublicPath = publicPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)

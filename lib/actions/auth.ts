@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabaseServer"
 
-export async function signInWithOAuth(provider: "google" | "azure") {
+export async function signInWithOAuth(provider: "google") {
   const supabase = await createClient()
 
   const siteUrl =
