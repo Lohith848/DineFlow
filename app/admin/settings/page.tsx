@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react"
 import { getHotelSettings, updateHotelSettings, getHolidays, addHoliday, deleteHoliday } from "@/lib/actions/admin"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Trash2 } from "lucide-react"
+import { Trash2, Loader2, Calendar, Clock, Ban, XCircle } from "lucide-react"
 import type { HotelSettings, Holiday } from "@/lib/types"
 
 export default function AdminSettingsPage() {
@@ -16,6 +15,8 @@ export default function AdminSettingsPage() {
   const [holidays, setHolidays] = useState<Holiday[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [newHolidayDate, setNewHolidayDate] = useState("")
+  const [newHolidayReason, setNewHolidayReason] = useState("")
 
   useEffect(() => {
     loadData()
@@ -31,19 +32,24 @@ export default function AdminSettingsPage() {
     setLoading(false)
   }
 
-  const handleSettingsSubmit = async (formData: FormData) => {
+  const handleSettingsSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     setSaving(true)
+    const formData = new FormData(e.currentTarget)
     await updateHotelSettings(formData)
+    await loadData()
     setSaving(false)
-    loadData()
   }
 
-  const handleAddHoliday = async (formData: FormData) => {
+  const handleAddHoliday = async () => {
+    if (!newHolidayDate) return
+    const formData = new FormData()
+    formData.append("date", newHolidayDate)
+    formData.append("reason", newHolidayReason)
     await addHoliday(formData)
+    setNewHolidayDate("")
+    setNewHolidayReason("")
     loadData()
-    // Reset form
-    const form = document.getElementById("add-holiday-form") as HTMLFormElement
-    if (form) form.reset()
   }
 
   const handleDeleteHoliday = async (id: string) => {
@@ -53,31 +59,72 @@ export default function AdminSettingsPage() {
     }
   }
 
+  const toggleStoreStatus = async () => {
+    if (!settings) return
+    setSaving(true)
+    const formData = new FormData()
+    formData.append("is_open", (!settings.is_open).toString())
+    formData.append("opening_time", settings.opening_time)
+    formData.append("closing_time", settings.closing_time)
+    await updateHotelSettings(formData)
+    await loadData()
+    setSaving(false)
+  }
+
   if (loading) {
-    return <div className="container py-12">Loading...</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (
-    <div className="container py-12">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage hotel timings and holidays
-        </p>
-      </div>
+    <div className="min-h-screen p-4 md:p-6 lg:p-8">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold">Settings</h1>
+          <p className="text-muted-foreground">Manage hotel timings and holidays</p>
+        </div>
 
-      <div className="grid gap-8">
-        {/* Hotel Timings */}
+        <div className={`p-4 rounded-2xl ${settings?.is_open ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"}`}>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {settings?.is_open ? (
+                <Clock className="w-6 h-6 text-green-600" />
+              ) : (
+                <XCircle className="w-6 h-6 text-red-600" />
+              )}
+              <div>
+                <p className="font-semibold">{settings?.is_open ? "Store is Open" : "Store is Closed"}</p>
+                <p className="text-sm text-muted-foreground">
+                  {settings?.opening_time} - {settings?.closing_time}
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={toggleStoreStatus}
+              disabled={saving}
+              variant={settings?.is_open ? "destructive" : "default"}
+              className="shrink-0"
+            >
+              {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              {settings?.is_open ? "Close Store" : "Open Store"}
+            </Button>
+          </div>
+        </div>
+
         <Card>
           <CardHeader>
-            <CardTitle>Hotel Timings</CardTitle>
-            <CardDescription>
-              Set your opening and closing times
-            </CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="w-5 h-5" />
+              Hotel Timings
+            </CardTitle>
+            <CardDescription>Set your opening and closing times</CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={handleSettingsSubmit} className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
+            <form onSubmit={handleSettingsSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="opening_time">Opening Time</Label>
                   <Input
@@ -99,83 +146,76 @@ export default function AdminSettingsPage() {
                   />
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  name="is_open"
-                  id="is_open"
-                  defaultChecked={settings?.is_open ?? true}
-                  className="h-4 w-4"
-                  disabled={saving}
-                />
-                <Label htmlFor="is_open">Hotel is currently open for orders</Label>
-              </div>
               <Button type="submit" disabled={saving}>
-                {saving ? "Saving..." : "Save Settings"}
+                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Save Timings
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        {/* Holidays */}
         <Card>
           <CardHeader>
-            <CardTitle>Holidays</CardTitle>
-            <CardDescription>
-              Add dates when the hotel will be closed
-            </CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Holidays
+            </CardTitle>
+            <CardDescription>Add dates when the hotel will be closed</CardDescription>
           </CardHeader>
-          <CardContent>
-            {/* Add Holiday Form */}
-            <form id="add-holiday-form" action={handleAddHoliday} className="flex gap-4 mb-6">
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="date">Date</Label>
-                <Input name="date" id="date" type="date" required />
-              </div>
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="reason">Reason (optional)</Label>
-                <Input name="reason" id="reason" placeholder="e.g., Festival" />
-              </div>
-              <div className="flex items-end">
-                <Button type="submit">Add Holiday</Button>
-              </div>
-            </form>
+          <CardContent className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Input
+                type="date"
+                value={newHolidayDate}
+                onChange={(e) => setNewHolidayDate(e.target.value)}
+                className="sm:flex-1"
+              />
+              <Input
+                type="text"
+                placeholder="Reason (e.g., Festival)"
+                value={newHolidayReason}
+                onChange={(e) => setNewHolidayReason(e.target.value)}
+                className="sm:flex-1"
+              />
+              <Button onClick={handleAddHoliday} disabled={!newHolidayDate} className="shrink-0">
+                Add
+              </Button>
+            </div>
 
-            {/* Holidays Table */}
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Reason</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {holidays.map((holiday) => (
-                  <TableRow key={holiday.id}>
-                    <TableCell>
-                      {new Date(holiday.date).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>{holiday.reason || "-"}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteHoliday(holiday.id)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            {holidays.length === 0 && (
-              <p className="text-center text-muted-foreground py-4">
-                No holidays scheduled
-              </p>
-            )}
+            <div className="space-y-2">
+              {holidays.length === 0 ? (
+                <p className="text-center text-muted-foreground py-4">No holidays scheduled</p>
+              ) : (
+                holidays.map((holiday) => (
+                  <div
+                    key={holiday.id}
+                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+                  >
+                    <div>
+                      <p className="font-medium">
+                        {new Date(holiday.date).toLocaleDateString("en-IN", {
+                          weekday: "short",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </p>
+                      {holiday.reason && (
+                        <p className="text-sm text-muted-foreground">{holiday.reason}</p>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeleteHoliday(holiday.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>

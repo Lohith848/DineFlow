@@ -97,6 +97,15 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading("admin")
     setError(null)
+
+    const allowedAdminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+    
+    if (!allowedAdminEmail || adminEmail.toLowerCase() !== allowedAdminEmail.toLowerCase()) {
+      setError("You are not authorized to access admin panel.")
+      setLoading(null)
+      return
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email: adminEmail,
       password: adminPassword,
@@ -194,7 +203,7 @@ export default function LoginPage() {
                   <Input
                     id="otp"
                     type="text"
-                    placeholder="Enter 6-digit code"
+                    placeholder="******"
                     maxLength={6}
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}

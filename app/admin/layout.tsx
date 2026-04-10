@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabaseServer"
+import AdminLayoutClient from "./components/AdminLayoutClient"
 
 export default async function AdminLayout({
   children,
@@ -13,16 +14,11 @@ export default async function AdminLayout({
     redirect("/admin/login")
   }
 
-  // Check if user is admin
-  const { data: admin } = await supabase
-    .from("admins")
-    .select("*")
-    .eq("id", user.id)
-    .single()
-
-  if (!admin) {
+  const allowedAdminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+  
+  if (!allowedAdminEmail || user.email?.toLowerCase() !== allowedAdminEmail.toLowerCase()) {
     redirect("/")
   }
 
-  return <>{children}</>
+  return <AdminLayoutClient>{children}</AdminLayoutClient>
 }
