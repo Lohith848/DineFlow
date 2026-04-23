@@ -128,7 +128,7 @@ function LoginForm() {
             <ChefHat className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white tracking-tight">
-            The Hunters Kitchen
+            The DineFlow
           </h1>
           <p className="text-slate-400 mt-2 text-sm">
             Sign in to order fresh food delivered to your hostel
@@ -280,7 +280,7 @@ function LoginForm() {
         </Card>
 
         <p className="text-center text-xs text-slate-700 mt-6">
-          © 2025 The Hunters Kitchen
+          © 2026 The DineFlow
         </p>
       </div>
     </div>
