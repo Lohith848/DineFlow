@@ -143,7 +143,7 @@ export default function LoginPage() {
             <ChefHat className="w-7 h-7 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Hunters Kitchen
+            DineFlow
           </h1>
           <p className="text-sm text-muted-foreground mt-1.5">
             Sign in to order fresh food
@@ -364,7 +364,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-xs text-muted-foreground/60 mt-6">
-          © {new Date().getFullYear()} Hunters Kitchen
+          © {new Date().getFullYear()} DineFlow
         </p>
       </div>
     </div>
