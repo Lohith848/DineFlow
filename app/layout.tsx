@@ -23,8 +23,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "The Hunters Kitchen - Student Food Delivery",
-  description: "Free food delivery for college students. Order from The Hunters Kitchen and get fresh food delivered to your hostel.",
+  title: "The DineFlow - Online Food Delivery",
+  description: "Free food delivery . Order from The DineFlow and get fresh food delivered to your hostel.",
 };
 
 export default function RootLayout({
