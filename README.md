@@ -79,7 +79,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the app.
 ## Project Structure
 
 ```
-hunters-kitchen/
+DineFlow/
 ├── app/
 │   ├── admin/           # Admin panel pages
 │   ├── auth/            # Auth callback routes
