@@ -89,7 +89,7 @@ export default function CheckoutPage() {
       return
     }
 
-    const message = `🍽️ *New Order - The Hunters Kitchen*
+    const message = `🍽️ *New Order - The DineFlow*
 
 👤 Name: ${name}
 📞 Phone: ${phone}
