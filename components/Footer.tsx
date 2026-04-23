@@ -21,11 +21,11 @@ export function Footer() {
                 <ChefHat className="w-5 h-5 text-white" />
               </div>
               <span className="font-bold text-base tracking-tight">
-                Hunters Kitchen
+                DineFlow
               </span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Fresh, home-style meals delivered free to college hostels.
+              Fresh, home-style meals delivered free to you.
               Made with love, served with care.
             </p>
           </div>
@@ -95,10 +95,10 @@ export function Footer() {
 
         <div className="mt-10 pt-6 border-t border-border/40 flex flex-col sm:flex-row justify-between items-center gap-2">
           <p className="text-xs text-muted-foreground/70">
-            © {new Date().getFullYear()} The Hunters Kitchen. All rights reserved.
+            © {new Date().getFullYear()} The DineFlow. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground/50">
-            Exclusively for college students
+            Exclusively for you 🌻
           </p>
         </div>
       </div>
