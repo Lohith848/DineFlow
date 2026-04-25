@@ -1,6 +1,6 @@
-# DineFlow - Student Food Ordering Platform
+# DineFlow - Online students Ordering Platform
 
-A web application for college students to order food from The DineFlow with free delivery.
+A web application to order food from The DineFlow with free delivery.
 
 ## Features
 
