@@ -98,7 +98,8 @@ export function Footer() {
             © {new Date().getFullYear()} The DineFlow. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground/50">
-            Exclusively for you 🌻
+            Exclusively for you 
+            Made by Lohith 🌻
           </p>
         </div>
       </div>
