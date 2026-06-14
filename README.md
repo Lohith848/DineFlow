@@ -156,4 +156,6 @@ MIT
 
 ---
 
-Built by LOHITH G
+## Built with ❤️ 
+
+LOHITH G.
