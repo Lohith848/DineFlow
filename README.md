@@ -158,4 +158,4 @@ MIT
 
 ## Built with ❤️ 
 
-LOHITH G.
+By LOHITH G.
