@@ -1,6 +1,6 @@
 # DineFlow - Online Food Ordering Platform.
 
-A web application to order food through WhatsApp using Dineflow .
+A web application to order food through WhatsApp hatsApp using Dineflow .
 
 ## Features
 
