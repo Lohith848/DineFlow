@@ -1,156 +1,179 @@
-# DineFlow - Online Food Ordering Platform.
+# DineFlow
 
-A web application to order food through WhatsApp using Dineflow .
+A modern online food ordering platform that lets customers browse the menu, place orders, and send them directly to the restaurant through WhatsApp.
 
 ---
 
 ## Features
 
-- **User Authentication**: Email/password signup and login via Supabase
-- **Profile Management**: Students enter name, phone, college, and delivery address
-- **Menu Browsing**: View available dishes with categories and prices
-- **Shopping Cart**: Add/remove items with persistent cart (localStorage)
-- **WhatsApp Ordering**: Orders sent to hotel owner via WhatsApp with pre-filled message
-- **Order History**: Users can track their past orders
-- **Admin Panel**: 
-  - Menu management (add, edit, delete, toggle availability)
-  - Order management (view all orders, update status)
-  - Settings (hotel timings, holidays)
+- User authentication with Supabase (Email & Password)
+- Customer profile management
+- Menu browsing with categories and pricing
+- Persistent shopping cart using Zustand and localStorage
+- WhatsApp-based order placement
+- Order history for customers
+- Admin dashboard for:
+  - Menu management
+  - Order management
+  - Restaurant settings
+
+---
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
-- **Database & Auth**: Supabase
-- **Styling**: Tailwind CSS v4, shadcn/ui
-- **State Management**: Zustand (with localStorage persistence)
-- **Deployment**: Vercel
+- Framework: Next.js 16 (App Router)
+- Database & Authentication: Supabase
+- Styling: Tailwind CSS v4, shadcn/ui
+- State Management: Zustand
+- Deployment: Vercel
 
-## Getting Started
+---
 
-### Prerequisites
+## Installation
 
-- Node.js 18+ installed
-- A Supabase account and project
+Prerequisites
 
-### 1. Clone and Install
+- Node.js 18 or later
+- Supabase project
 
-```bash
+Clone the Project
+
+git clone <repository-url>
 cd DineFlow
 npm install
-```
 
-### 2. Set Up Supabase
+---
 
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to SQL Editor and run the contents of `supabase-schema.sql`
-3. This creates all tables, RLS policies, and sample menu items
+Supabase Setup
 
-### 3. Configure Environment Variables
+1. Create a Supabase project.
+2. Open the SQL Editor.
+3. Run the contents of "supabase-schema.sql".
 
-1. Copy `.env.example` to `.env.local`:
-   ```bash
-   cp .env.example .env.local
-   ```
+This creates the required tables, policies, and sample data.
 
-2. Update the values:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-   NEXT_PUBLIC_SITE_URL=http://localhost:3000
-   NEXT_PUBLIC_WHATSAPP_NUMBER=916383346991
-   ```
+---
 
-### 4. Create Admin User
+## Environment Variables
 
-1. Start the dev server and sign up at `/login`
-2. In Supabase Dashboard > Authentication > Users, copy your user ID
-3. Run this in SQL Editor:
-   ```sql
-   INSERT INTO admins (id, email) VALUES ('your-user-id-here', 'your@email.com');
-   ```
+Copy the example file:
 
-### 5. Run Development Server
+cp .env.example .env.local
 
-```bash
+Update ".env.local":
+
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_WHATSAPP_NUMBER=916383346991
+
+---
+
+## Admin Setup
+
+1. Run the application.
+2. Create an account from the login page.
+3. Copy your User ID from Supabase → Authentication → Users.
+4. Execute:
+
+INSERT INTO admins (id, email)
+VALUES ('your-user-id', 'your@email.com');
+
+---
+
+## Run the Application
+
 npm run dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+Visit:
+
+http://localhost:3000
+
+---
 
 ## Project Structure
 
-```
 DineFlow/
 ├── app/
-│   ├── admin/           # Admin panel pages
-│   ├── auth/            # Auth callback routes
-│   ├── cart/            # Shopping cart page
-│   ├── checkout/        # Checkout with WhatsApp ordering
-│   ├── login/           # User login/signup
-│   ├── menu/            # Menu browsing
-│   ├── orders/          # Order history
-│   ├── profile/         # User profile pages
-│   ├── middleware.ts    # Auth middleware
-│   ├── layout.tsx       # Root layout with Header/Footer
-│   └── page.tsx         # Home page
+│   ├── admin/
+│   ├── auth/
+│   ├── cart/
+│   ├── checkout/
+│   ├── login/
+│   ├── menu/
+│   ├── orders/
+│   ├── profile/
+│   ├── middleware.ts
+│   ├── layout.tsx
+│   └── page.tsx
 ├── components/
-│   ├── ui/              # shadcn/ui components
-│   ├── Header.tsx       # Navigation header
-│   └── Footer.tsx       # Site footer
+│   ├── ui/
+│   ├── Header.tsx
+│   └── Footer.tsx
 ├── lib/
-│   ├── actions/         # Server actions (auth, menu, orders, admin)
-│   ├── supabaseClient.ts    # Browser Supabase client
-│   ├── supabaseServer.ts    # Server Supabase client
-│   ├── supabaseMiddleware.ts # Auth middleware helper
-│   ├── types.ts         # TypeScript types
-│   └── utils.ts         # Utility functions
+│   ├── actions/
+│   ├── supabaseClient.ts
+│   ├── supabaseServer.ts
+│   ├── supabaseMiddleware.ts
+│   ├── types.ts
+│   └── utils.ts
 ├── store/
-│   └── cart.ts          # Zustand cart store with persistence
-├── supabase-schema.sql  # Database schema
-└── .env.example         # Environment variables template
-```
+│   └── cart.ts
+├── supabase-schema.sql
+└── .env.example
 
-## Deployment (Vercel)
+---
 
-1. Push code to GitHub
-2. Import project in [Vercel](https://vercel.com)
-3. Add environment variables in Vercel dashboard
-4. Deploy
+## Deployment
 
-## Database Schema
+1. Push the project to GitHub.
+2. Import the repository into Vercel.
+3. Configure the required environment variables.
+4. Deploy.
 
-### Tables
+---
 
-- `profiles` - User profiles (name, phone, address, college)
-- `menu_items` - Restaurant menu items
-- `orders` - Order records
-- `hotel_settings` - Hotel timings and open/close status
-- `holidays` - Holiday dates when hotel is closed
-- `admins` - Admin user references
+## Database
 
-See `supabase-schema.sql` for full schema with RLS policies.
+Tables
 
-## WhatsApp Integration
+- "profiles"
+- "menu_items"
+- "orders"
+- "hotel_settings"
+- "holidays"
+- "admins"
 
-Orders are sent via WhatsApp using the `wa.me` link format:
+Refer to "supabase-schema.sql" for the complete schema and Row Level Security policies.
 
-```
+---
+
+## WhatsApp Ordering
+
+Orders are sent using the standard WhatsApp URL format:
+
 https://wa.me/<number>?text=<encoded-message>
-```
 
-The message includes:
-- Customer name, phone, address, college
-- Order items with quantities and prices
+Each order contains:
+
+- Customer information
+- Delivery address
+- Ordered items
+- Quantity
 - Total amount
-- Payment method (Cash on Delivery)
+- Payment method
+
+---
 
 ## Security
 
-- Row Level Security (RLS) on all tables
-- Protected routes via middleware
-- Server-side validation for all inputs
-- Admin-only routes protected by database check
+- Row Level Security (RLS)
+- Protected application routes
+- Server-side input validation
+- Database-level admin authorization
+
+---
 
 ## License
 
@@ -158,6 +181,6 @@ MIT
 
 ---
 
-## Built with ❤️ 
+## Author
 
-By LOHITH G.
+Lohith G.
